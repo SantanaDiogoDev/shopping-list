@@ -1,4 +1,9 @@
 package br.com.shopping_list.repositories
 
-class SharingRepository {
-}
+import br.com.shopping_list.entities.Sharing
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
+import java.util.UUID
+
+@Repository
+interface SharingRepository : JpaRepository<Sharing, UUID>

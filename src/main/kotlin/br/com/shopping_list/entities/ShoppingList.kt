@@ -5,8 +5,8 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-@Table(name = "items")
-data class Item (
+@Table(name = "lists")
+data class ShoppingList (
     @Id
     @GeneratedValue(generator = "UUID")
     val id: UUID = UUID.randomUUID(),
@@ -15,14 +15,11 @@ data class Item (
     val name: String,
 
     @Column(nullable = true)
-    val quantity: Int,
-
-    @Column(nullable = false)
-    val status: Boolean = false, //false: Not bought
-
-    @Column(nullable = false)
-    val listId: UUID,
+    val description: String? = null,
 
     @Column(nullable = false)
     val creationTime: LocalDateTime = LocalDateTime.now(),
+
+    @Column(nullable = false)
+    val creatorId: UUID
 )

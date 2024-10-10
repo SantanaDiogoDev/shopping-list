@@ -17,7 +17,7 @@ class UserController @Autowired constructor(private val userService: UserService
     }
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): ResponseEntity<UserDTO> {
+    fun getUserById(@PathVariable id: String): ResponseEntity<UserDTO> {
         val userDTO = userService.getUserById(id)
         return if (userDTO != null) {
             ResponseEntity.ok(userDTO)

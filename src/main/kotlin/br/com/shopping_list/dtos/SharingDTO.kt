@@ -1,4 +1,9 @@
 package br.com.shopping_list.dtos
 
-class SharingDTO {
-}
+import java.util.*
+
+data class SharingDTO (
+    val id: UUID,
+    val listId: UUID,
+    val userId: UUID
+)
