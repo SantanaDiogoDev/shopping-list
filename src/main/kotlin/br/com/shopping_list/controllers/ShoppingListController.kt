@@ -31,4 +31,19 @@ class ShoppingListController @Autowired constructor(private val listService: Sho
     fun getAllLists(): List<ShoppingListDTO>{
         return listService.getAllLists()
     }
+
+    @PostMapping("/{listId}/share/{userId}")
+    fun shareListWithUser(
+        @PathVariable listId: UUID,
+        @PathVariable userId: UUID
+    ): ResponseEntity<Unit> {
+        return try {
+            listService.shareListWithUser(listId, userId)
+            ResponseEntity.ok().build()
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.badRequest().body(null)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.notFound().build()
+        }
+    }
 }

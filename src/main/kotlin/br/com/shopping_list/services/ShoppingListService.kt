@@ -1,8 +1,9 @@
 package br.com.shopping_list.services
 
 import br.com.shopping_list.dtos.ShoppingListDTO
-import br.com.shopping_list.dtos.UserDTO
+import br.com.shopping_list.entities.Sharing
 import br.com.shopping_list.entities.ShoppingList
+import br.com.shopping_list.repositories.SharingRepository
 import br.com.shopping_list.repositories.ShoppingListRepository
 import br.com.shopping_list.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +14,8 @@ import java.util.*
 @Service
 class ShoppingListService @Autowired constructor(
     private val shoppingListRepository: ShoppingListRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sharingRepository: SharingRepository,
 ){
     fun createList(shoppingListDTO: ShoppingListDTO): ShoppingListDTO {
         if (!userRepository.existsById(shoppingListDTO.creatorId)) {
@@ -26,6 +28,12 @@ class ShoppingListService @Autowired constructor(
             creatorId = shoppingListDTO.creatorId,
             creationTime = LocalDateTime.now()
         )
+
+        val sharing = Sharing (
+            listId = newList.id,
+            userId = newList.creatorId
+        )
+        sharingRepository.save(sharing)
 
         return ShoppingListDTO(
             id = shoppingListRepository.save(newList).id,
@@ -60,5 +68,21 @@ class ShoppingListService @Autowired constructor(
                 creatorId = list.creatorId
             )
         }
+    }
+
+    fun shareListWithUser(listId: UUID, userId: UUID) {
+        if (!shoppingListRepository.existsById(listId)) {
+            throw IllegalArgumentException("List with id $listId not found")
+        }
+
+        if (!userRepository.existsById(userId)) {
+            throw IllegalArgumentException("User with id $userId not found")
+        }
+
+        val sharing = Sharing(
+            listId = listId,
+            userId = userId
+        )
+        sharingRepository.save(sharing)
     }
 }

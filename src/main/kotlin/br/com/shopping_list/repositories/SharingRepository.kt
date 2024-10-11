@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface SharingRepository : JpaRepository<Sharing, UUID>
+interface SharingRepository : JpaRepository<Sharing, UUID> {
+    fun findByListId(listId: UUID): List<Sharing>
+    fun findByUserId(userId: UUID): List<Sharing>
+}
