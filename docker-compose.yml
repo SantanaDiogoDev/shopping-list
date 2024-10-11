@@ -1,0 +1,28 @@
+# version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/shopping_list_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 261221
+#    depends_on:
+#      - db
+    networks:
+      - app-network
+
+#  db:
+#    image: postgres:17
+#    environment:
+#      POSTGRES_DB: shopping_list_db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 261221
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - app-network
+
+networks:
+  app-network:
