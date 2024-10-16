@@ -15,7 +15,7 @@ class ItemService @Autowired constructor(
     private val shoppingListRepository: ShoppingListRepository
 ){
     fun createItem(itemDTO: ItemDTO): ItemDTO {
-        if(shoppingListRepository.existsById(itemDTO.listId)){
+        if(!shoppingListRepository.existsById(itemDTO.listId)){
             throw IllegalArgumentException("List with id ${itemDTO.listId} not found")
         }
 

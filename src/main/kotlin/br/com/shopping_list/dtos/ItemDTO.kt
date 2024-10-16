@@ -4,10 +4,10 @@ import java.time.LocalDateTime
 import java.util.*
 
 data class ItemDTO (
-    val id: UUID,
+    val id: UUID?,
     val name: String,
     val quantity: Int,
-    val status: Boolean,
+    val status: Boolean = false,
     val listId: UUID,
-    val creationTime: LocalDateTime
+    val creationTime: LocalDateTime?
 )
