@@ -1,5 +1,6 @@
 package br.com.shopping_list.controllers
 
+import br.com.shopping_list.configuration.UserNotFoundException
 import br.com.shopping_list.dtos.UserDTO
 import br.com.shopping_list.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,11 +19,13 @@ class UserController @Autowired constructor(private val userService: UserService
 
     @GetMapping("/{id}")
     fun getUserById(@PathVariable id: String): ResponseEntity<UserDTO> {
-        val userDTO = userService.getUserById(id)
-        return if (userDTO != null) {
+        return try {
+            val userDTO = userService.getUserById(id)
             ResponseEntity.ok(userDTO)
-        } else {
+        } catch (e: UserNotFoundException) {
             ResponseEntity.notFound().build()
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.badRequest().body(null)
         }
     }
 

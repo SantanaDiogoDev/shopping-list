@@ -1,5 +1,6 @@
 package br.com.shopping_list.services
 
+import br.com.shopping_list.configuration.UserNotFoundException
 import br.com.shopping_list.dtos.UserDTO
 import br.com.shopping_list.entities.User
 import br.com.shopping_list.repositories.UserRepository
@@ -29,7 +30,7 @@ class UserService @Autowired constructor(
 
 
         return userRepository.findById(uuid).orElseThrow {
-            IllegalArgumentException("User not found!")
+            UserNotFoundException("User not found!")
         }.let { user ->
             UserDTO(user.id, user.name, user.email, user.password)
         }
