@@ -1,19 +1,31 @@
 import br.com.shopping_list.ShoppingListApplication
 import br.com.shopping_list.configuration.UserNotFoundException
+import br.com.shopping_list.controllers.UserController
 import br.com.shopping_list.dtos.UserDTO
 import br.com.shopping_list.services.UserService
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
+import org.mockito.ArgumentCaptor
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito.any
+import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import java.util.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
+import org.springframework.boot.test.mock.mockito.MockBean
 
 @SpringBootTest(classes = [ShoppingListApplication::class])
 @AutoConfigureMockMvc
@@ -24,6 +36,8 @@ class UserControllerTest {
 
     @MockBean
     private lateinit var userService: UserService
+
+    private val objectMapper = jacksonObjectMapper()
 
     private fun basicAuthHeader(username: String, password: String): String {
         val auth = "$username:$password"
@@ -42,6 +56,17 @@ class UserControllerTest {
             email = "john@example.com",
             password = "password123"
         )
+
+        val createdUserDTO = UserDTO(
+            id = UUID.randomUUID(),
+            name = "John Doe",
+            email = "john.doe@example.com",
+            password = null
+        )
+
+//        every { userService.createUser(any()) } returns createdUserDTO
+
+        val userJson = objectMapper.writeValueAsString(userDTO)
 
         `when`(userService.createUser(any(UserDTO::class.java))).thenReturn(userDTO)
 

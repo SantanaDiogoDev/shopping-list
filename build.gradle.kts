@@ -41,6 +41,10 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.springframework.kafka:spring-kafka-test")
 
+	testImplementation("io.mockk:mockk:1.12.0")
+	testImplementation("com.ninja-squad:springmockk:3.0.1")
+
+	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 	testImplementation("org.mockito:mockito-core")
 	testImplementation("org.springframework.security:spring-security-test")
 }
