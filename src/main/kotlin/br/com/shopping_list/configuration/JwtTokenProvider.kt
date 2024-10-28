@@ -1,16 +1,18 @@
-package br.com.shopping_list.security
+package br.com.shopping_list.configuration
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.stereotype.Component
 import java.util.*
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 
 @Component
 class JwtTokenProvider {
 
-    private val secretKey = "suaChaveSecretaSegura" // Substitua por uma chave segura
-    private val validityInMilliseconds: Long = 3600000 // 1h de validade
+    private val secretKey = generateSecretKey()
+    private val validityInMilliseconds: Long = 3600000 //1h validation
 
     fun createToken(username: String): String {
         val claims = Jwts.claims().setSubject(username)
@@ -21,20 +23,35 @@ class JwtTokenProvider {
             .setClaims(claims)
             .setIssuedAt(now)
             .setExpiration(validity)
-            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .signWith(secretKey, SignatureAlgorithm.HS256)
             .compact()
     }
 
     fun getUsername(token: String): String {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body.subject
-    }
+        return Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(token)
+            .body
+            .subject    }
 
     fun validateToken(token: String): Boolean {
-        try {
-            val claims: Claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body
-            return !claims.expiration.before(Date())
+        return try {
+            val claims: Claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .body
+            !claims.expiration.before(Date())
         } catch (e: Exception) {
-            return false
+            false
         }
+    }
+
+    private final fun generateSecretKey(): SecretKey {
+        val keyGenerator: KeyGenerator = KeyGenerator.getInstance("HmacSHA256")
+        keyGenerator.init(256)
+
+        return keyGenerator.generateKey()
     }
 }
