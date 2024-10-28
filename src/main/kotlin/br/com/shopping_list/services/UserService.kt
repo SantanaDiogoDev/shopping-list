@@ -36,6 +36,11 @@ class UserService @Autowired constructor(
         }
     }
 
+    fun getUserByName(name: String): UserDTO? {
+        val user = userRepository.findByName(name)
+        return user?.let { UserDTO.from(it) }
+    }
+
     fun getAllUsers(): List<UserDTO> {
         val users =  userRepository.findAll();
 

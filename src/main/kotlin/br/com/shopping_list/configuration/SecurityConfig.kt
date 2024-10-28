@@ -21,7 +21,9 @@ class SecurityConfig {
         http
             .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { auth ->
-                auth.anyRequest().authenticated()
+                auth
+                    .requestMatchers("/api/auth/login").permitAll()
+                    .anyRequest().authenticated()
             }
             .cors{ cors -> cors }
             .httpBasic { basic -> basic }
