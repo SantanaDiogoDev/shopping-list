@@ -40,6 +40,20 @@ class JwtUtil {
             .body
     }
 
+    fun getRemainingTime(token: String): String {
+        val claims = getClaimsFromToken(token)
+        val expiration = claims.expiration.time
+        val now = System.currentTimeMillis()
+        val remainingTimeMillis = if (expiration > now) expiration - now else 0L
+
+        // Converte para formato "HH:mm:ss"
+        val hours = (remainingTimeMillis / 3600000) % 24
+        val minutes = (remainingTimeMillis / 60000) % 60
+        val seconds = (remainingTimeMillis / 1000) % 60
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
     private final fun generateSecretKey(): SecretKey {
         val keyGenerator: KeyGenerator = KeyGenerator.getInstance("HmacSHA256")
         keyGenerator.init(256)

@@ -1,3 +1,5 @@
+package br.com.shopping_list.controllers
+
 import br.com.shopping_list.configuration.JwtUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +25,6 @@ class AuthController @Autowired constructor(
     fun authenticateUser(@RequestBody request: LoginRequest): ResponseEntity<Any> {
         return try {
             logger.info("Tentando autenticar usuário: ${request.name}")
-            println("Tentando autenticar usuário: ${request.name}")
             val authentication: Authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(request.name, request.password)
             )
@@ -40,17 +41,16 @@ class AuthController @Autowired constructor(
         }
     }
 
-//    @GetMapping("/validate")
-//    fun validateToken(@RequestParam token: String): ResponseEntity<Map<String, Any>> {
-//        val isValid = jwtTokenProvider.validateToken(token)
-//        return if (isValid) {
-//            val username = jwtTokenProvider.getUsername(token)
-//            ResponseEntity.ok(mapOf("valid" to true, "username" to username))
-//        } else {
-//            ResponseEntity.badRequest().body(mapOf("valid" to false))
-//        }
-//    }
+    @GetMapping("/validateToken")
+    fun validateToken(@RequestParam token: String): ResponseEntity<TokenValidationResponse> {
+        val isValid = jwtUtil.validateToken(token)
+        val remainingTime = if (isValid) jwtUtil.getRemainingTime(token) else "00:00:00"
+
+
+        return ResponseEntity.ok(TokenValidationResponse(isValid, remainingTime))
+    }
 }
 
 data class LoginRequest(val name: String, val password: String)
 data class JwtResponse(val token: String)
+data class TokenValidationResponse(val isValid: Boolean, val remainingTimeMillis: String)
