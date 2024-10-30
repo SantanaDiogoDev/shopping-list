@@ -9,43 +9,35 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 
 @Component
-class JwtTokenProvider {
+class JwtUtil {
 
     private val secretKey = generateSecretKey()
-    private val validityInMilliseconds: Long = 3600000 //1h validation
+    private val jwtExpirationMs : Long = 3600000 //1h validation
 
     fun createToken(username: String): String {
-        val claims = Jwts.claims().setSubject(username)
-        val now = Date()
-        val validity = Date(now.time + validityInMilliseconds)
-
         return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .signWith(secretKey, SignatureAlgorithm.HS256)
+            .setSubject(username)
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + jwtExpirationMs))
+            .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact()
     }
 
-    fun getUsername(token: String): String {
+    fun validateToken(token: String): Boolean {
+        return try {
+            val claims = getClaimsFromToken(token)
+            !claims.expiration.before(Date())
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun getClaimsFromToken(token: String): Claims {
         return Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build()
             .parseClaimsJws(token)
             .body
-            .subject    }
-
-    fun validateToken(token: String): Boolean {
-        return try {
-            val claims: Claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .body
-            !claims.expiration.before(Date())
-        } catch (e: Exception) {
-            false
-        }
     }
 
     private final fun generateSecretKey(): SecretKey {

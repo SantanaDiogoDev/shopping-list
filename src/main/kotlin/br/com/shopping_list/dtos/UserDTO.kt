@@ -19,4 +19,13 @@ data class UserDTO(
             )
         }
     }
+
+    fun toEntity(): User {
+        return User(
+            id = id ?: UUID.randomUUID(),
+            name = name,
+            email = email,
+            password = password ?: ""
+        )
+    }
 }
