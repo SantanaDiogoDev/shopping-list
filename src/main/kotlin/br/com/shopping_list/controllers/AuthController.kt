@@ -18,26 +18,21 @@ class AuthController @Autowired constructor(
     private val authenticationManager: AuthenticationManager,
     private val jwtUtil: JwtUtil
 ) {
-
-    private val logger = LoggerFactory.getLogger(AuthController::class.java)
-
     @PostMapping("/login")
     fun authenticateUser(@RequestBody request: LoginRequest): ResponseEntity<Any> {
         return try {
-            logger.info("Tentando autenticar usuário: ${request.name}")
             val authentication: Authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(request.name, request.password)
             )
-            logger.debug("Usuário autenticado com sucesso: ${authentication.name}")
             SecurityContextHolder.getContext().authentication = authentication
             val jwt = jwtUtil.createToken(request.name)
 
             ResponseEntity.ok(JwtResponse(jwt))
 
         } catch (e: BadCredentialsException) {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas")
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials")
         } catch (e: Exception) {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno no servidor")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error\n")
         }
     }
 

@@ -16,7 +16,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 class SecurityConfig (
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
-    private val debugFilter: DebugFilter
         ) {
     @Bean
     fun passwordEncoder(): BCryptPasswordEncoder {
@@ -35,9 +34,7 @@ class SecurityConfig (
                     .requestMatchers("/api/auth/**", "/error").permitAll()
                     .anyRequest().authenticated()
             }
-
-//            .addFilterBefore(debugFilter, UsernamePasswordAuthenticationFilter::class.java)
-//            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
     }
 
