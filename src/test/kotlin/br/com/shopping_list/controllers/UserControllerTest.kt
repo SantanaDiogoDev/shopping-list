@@ -1,18 +1,13 @@
-import br.com.shopping_list.ShoppingListApplication
+package br.com.shopping_list.controllers
+
+import br.com.shopping_list.configuration.JwtUtil
 import br.com.shopping_list.configuration.UserNotFoundException
-import br.com.shopping_list.controllers.UserController
 import br.com.shopping_list.dtos.UserDTO
 import br.com.shopping_list.services.UserService
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.any
+import org.mockito.*
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -23,11 +18,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.eq
 import org.springframework.boot.test.mock.mockito.MockBean
 
-@SpringBootTest(classes = [ShoppingListApplication::class])
+@SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
 
@@ -37,55 +30,45 @@ class UserControllerTest {
     @MockBean
     private lateinit var userService: UserService
 
-    private val objectMapper = jacksonObjectMapper()
+    @Autowired
+    private lateinit var jwtUtil: JwtUtil
 
-    private fun basicAuthHeader(username: String, password: String): String {
-        val auth = "$username:$password"
-        val encodedAuth = Base64.getEncoder().encodeToString(auth.toByteArray())
-        return "Basic $encodedAuth"
+    val username = "Arthur"
+
+    private fun jwtAuthHeader(username: String): String {
+        val token = jwtUtil.createToken(username)
+        return "Bearer $token"
     }
 
-    val username = "cUser"
-    val password = "customPassword"
-
     @Test
-    fun `test create user`() {
+    fun `create new user and return the user data`() {
         val userDTO = UserDTO(
             id = UUID.randomUUID(),
-            name = "John Doe",
-            email = "john@example.com",
-            password = "password123"
-        )
-
-        val createdUserDTO = UserDTO(
-            id = UUID.randomUUID(),
-            name = "John Doe",
-            email = "john.doe@example.com",
+            name = "Arthur",
+            email = "arthur@example.com",
             password = null
         )
 
-//        every { userService.createUser(any()) } returns createdUserDTO
-
-        val userJson = objectMapper.writeValueAsString(userDTO)
-
-        `when`(userService.createUser(any(UserDTO::class.java))).thenReturn(userDTO)
+        given(userService.createUser(org.mockito.kotlin.any())).willReturn(userDTO)
 
         val requestContent = """
             {
-                "name": "John Doe",
-                "email": "john@example.com",
+                "name": "Arthur",
+                "email": "arthur@example.com",
                 "password": "password123"
             }
         """
 
         mockMvc.perform(
             post("/api/users")
-                .header("Authorization", basicAuthHeader(username, password))
+                .header("Authorization", jwtAuthHeader(username))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestContent)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.name").value("John Doe"))
+            .andExpect(jsonPath("$.name").value("Arthur"))
+            .andExpect(jsonPath("$.email").value("arthur@example.com"))
+            .andExpect(jsonPath("$.password").doesNotExist())
     }
 
     @Test
@@ -101,7 +84,7 @@ class UserControllerTest {
         `when`(userService.getUserById(userId.toString())).thenReturn(userDTO)
 
         mockMvc.perform(get("/api/users/$userId")
-            .header("Authorization", basicAuthHeader(username, password))
+            .header("Authorization", jwtAuthHeader(username))
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(userId.toString()))
@@ -115,7 +98,7 @@ class UserControllerTest {
         `when`(userService.getUserById(userId.toString())).thenThrow(UserNotFoundException("User not found!"))
 
         mockMvc.perform(get("/api/users/$userId")
-            .header("Authorization", basicAuthHeader(username, password))
+            .header("Authorization", jwtAuthHeader(username))
         )
             .andExpect(status().isNotFound)
     }
@@ -138,10 +121,16 @@ class UserControllerTest {
         `when`(userService.getAllUsers()).thenReturn(listOf(user1, user2))
 
         mockMvc.perform(get("/api/users")
-            .header("Authorization", basicAuthHeader(username, password))
+            .header("Authorization", jwtAuthHeader(username))
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].name").value("John Doe"))
             .andExpect(jsonPath("$[1].name").value("Jane Doe"))
     }
 }
+
+inline fun <reified T> anyNonNull(): T = Mockito.any(T::class.java) ?: createInstance()
+
+inline fun <reified T> createInstance(): T = T::class.java.getDeclaredConstructor().newInstance()
+
+inline fun <reified T : Any> captureNonNull(): ArgumentCaptor<T> = ArgumentCaptor.forClass(T::class.java)

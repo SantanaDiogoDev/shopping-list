@@ -5,9 +5,9 @@ import java.util.*
 
 data class UserDTO(
     val id: UUID?,
-    val name: String,
-    val email: String,
-    val password: String?
+    val name: String = "",
+    val email: String  = "",
+    val password: String? = null
 ) {
     companion object {
         fun from(user: User): UserDTO {

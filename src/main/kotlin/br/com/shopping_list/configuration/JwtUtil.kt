@@ -19,7 +19,7 @@ class JwtUtil {
             .setSubject(username)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + jwtExpirationMs))
-            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .signWith(secretKey, SignatureAlgorithm.HS256)
             .compact()
     }
 
@@ -46,7 +46,7 @@ class JwtUtil {
         val now = System.currentTimeMillis()
         val remainingTimeMillis = if (expiration > now) expiration - now else 0L
 
-        // Converte para formato "HH:mm:ss"
+        // Converting format to "HH:mm:ss"
         val hours = (remainingTimeMillis / 3600000) % 24
         val minutes = (remainingTimeMillis / 60000) % 60
         val seconds = (remainingTimeMillis / 1000) % 60
