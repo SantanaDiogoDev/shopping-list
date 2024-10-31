@@ -27,7 +27,7 @@ class JwtAuthenticationFilter(
             val userDetails = userDetailsService.loadUserByUsername(name)
 
             val authentication = UsernamePasswordAuthenticationToken(
-                userDetails, null
+                userDetails, null, userDetails.authorities
             )
             authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
 

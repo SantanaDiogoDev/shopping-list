@@ -19,7 +19,7 @@ class CustomUserDetailsService(
         val authorities = listOf(SimpleGrantedAuthority("ROLE_USER"))
 
         return org.springframework.security.core.userdetails.User(
-            user.name, user.password, listOf()
+            user.name, user.password, authorities
         )
     }
 }
