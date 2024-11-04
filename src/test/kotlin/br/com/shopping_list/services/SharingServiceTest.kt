@@ -1,14 +1,17 @@
+package br.com.shopping_list.services
+
 import br.com.shopping_list.entities.Sharing
 import br.com.shopping_list.repositories.SharingRepository
-import br.com.shopping_list.services.SharingService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.*
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
 @SpringBootTest
+@AutoConfigureMockMvc
 class SharingServiceTest {
 
     private val sharingRepository = mock(SharingRepository::class.java)

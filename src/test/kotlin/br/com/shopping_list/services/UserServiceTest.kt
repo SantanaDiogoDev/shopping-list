@@ -1,16 +1,20 @@
+package br.com.shopping_list.services
+
+import br.com.shopping_list.configuration.UserNotFoundException
 import br.com.shopping_list.dtos.UserDTO
 import br.com.shopping_list.entities.User
 import br.com.shopping_list.repositories.UserRepository
-import br.com.shopping_list.services.UserService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.*
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.*
 
 @SpringBootTest
+@AutoConfigureMockMvc
 class UserServiceTest {
 
     private val userRepository = mock(UserRepository::class.java)
@@ -69,7 +73,7 @@ class UserServiceTest {
 
         `when`(userRepository.findById(userId)).thenReturn(Optional.empty())
 
-        assertThrows<IllegalArgumentException> {
+        assertThrows<UserNotFoundException> {
             userService.getUserById(userId.toString())
         }
     }

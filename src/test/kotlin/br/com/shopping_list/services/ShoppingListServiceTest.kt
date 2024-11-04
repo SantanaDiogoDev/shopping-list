@@ -1,18 +1,21 @@
+package br.com.shopping_list.services
+
 import br.com.shopping_list.dtos.ShoppingListDTO
 import br.com.shopping_list.entities.ShoppingList
 import br.com.shopping_list.repositories.SharingRepository
 import br.com.shopping_list.repositories.ShoppingListRepository
 import br.com.shopping_list.repositories.UserRepository
-import br.com.shopping_list.services.ShoppingListService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.*
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
 import java.util.*
 
 @SpringBootTest
+@AutoConfigureMockMvc
 class ShoppingListServiceTest {
 
     private val shoppingListRepository = mock(ShoppingListRepository::class.java)
