@@ -20,6 +20,6 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<String> {
-        return ResponseEntity.status(500).body("Erro no servidor: ${e.message}")
+        return ResponseEntity.status(500).body("Server error: ${e.message}")
     }
 }

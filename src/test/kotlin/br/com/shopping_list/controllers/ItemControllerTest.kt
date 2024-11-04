@@ -4,7 +4,6 @@ import br.com.shopping_list.configuration.JwtUtil
 import br.com.shopping_list.dtos.ItemDTO
 import br.com.shopping_list.services.ItemService
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
