@@ -5,7 +5,6 @@ import br.com.shopping_list.configuration.UserNotFoundException
 import br.com.shopping_list.dtos.UserDTO
 import br.com.shopping_list.services.UserService
 import org.junit.jupiter.api.Test
-import org.mockito.*
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,7 +40,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun `create new user and return the user data`() {
+    fun `test create user and return the user data`() {
         val userDTO = UserDTO(
             id = UUID.randomUUID(),
             name = "Arthur",
@@ -128,9 +127,3 @@ class UserControllerTest {
             .andExpect(jsonPath("$[1].name").value("Jane Doe"))
     }
 }
-
-inline fun <reified T> anyNonNull(): T = Mockito.any(T::class.java) ?: createInstance()
-
-inline fun <reified T> createInstance(): T = T::class.java.getDeclaredConstructor().newInstance()
-
-inline fun <reified T : Any> captureNonNull(): ArgumentCaptor<T> = ArgumentCaptor.forClass(T::class.java)

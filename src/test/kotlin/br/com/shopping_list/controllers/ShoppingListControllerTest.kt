@@ -1,4 +1,5 @@
-import br.com.shopping_list.controllers.ShoppingListController
+package br.com.shopping_list.controllers
+
 import br.com.shopping_list.dtos.ShoppingListDTO
 import br.com.shopping_list.services.ShoppingListService
 import org.junit.jupiter.api.Test

@@ -1,4 +1,5 @@
-import br.com.shopping_list.controllers.SharingController
+package br.com.shopping_list.controllers
+
 import br.com.shopping_list.dtos.SharingDTO
 import br.com.shopping_list.services.SharingService
 import org.junit.jupiter.api.Test
