@@ -5,6 +5,7 @@ import br.com.shopping_list.dtos.UserDTO
 import br.com.shopping_list.entities.User
 import br.com.shopping_list.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
@@ -36,9 +37,11 @@ class UserService @Autowired constructor(
         }
     }
 
-    fun getUserByName(name: String): UserDTO? {
-        val user = userRepository.findByName(name)
-        return user?.let { UserDTO.from(it) }
+    fun getUserByNameOrEmail(usernameOrEmail: String): UserDTO? {
+        val user = userRepository.findByName(usernameOrEmail)
+            ?: userRepository.findByEmail(usernameOrEmail)
+            ?: throw UsernameNotFoundException("User not found: $usernameOrEmail")
+        return user.let { UserDTO.from(it) }
     }
 
     fun getAllUsers(): List<UserDTO> {

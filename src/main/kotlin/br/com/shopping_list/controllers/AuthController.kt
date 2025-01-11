@@ -1,7 +1,6 @@
 package br.com.shopping_list.controllers
 
 import br.com.shopping_list.configuration.JwtUtil
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,11 +20,14 @@ class AuthController @Autowired constructor(
     @PostMapping("/login")
     fun authenticateUser(@RequestBody request: LoginRequest): ResponseEntity<Any> {
         return try {
+            val usernameOrEmail = request.name ?: request.email
+                ?: return ResponseEntity.badRequest().body("Name or Email must be provided")
+
             val authentication: Authentication = authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(request.name, request.password)
+                UsernamePasswordAuthenticationToken(usernameOrEmail, request.password)
             )
             SecurityContextHolder.getContext().authentication = authentication
-            val jwt = jwtUtil.createToken(request.name)
+            val jwt = jwtUtil.createToken(usernameOrEmail)
 
             ResponseEntity.ok(JwtResponse(jwt))
 
@@ -46,6 +48,6 @@ class AuthController @Autowired constructor(
     }
 }
 
-data class LoginRequest(val name: String, val password: String)
+data class LoginRequest(val name: String?, val email: String?, val password: String)
 data class JwtResponse(val token: String)
 data class TokenValidationResponse(val isValid: Boolean, val remainingTimeMillis: String)

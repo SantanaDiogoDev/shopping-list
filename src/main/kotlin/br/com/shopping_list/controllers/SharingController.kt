@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
@@ -26,5 +28,11 @@ class SharingController @Autowired constructor(private val sharingService: Shari
     @GetMapping
     fun getAllShares(): List<SharingDTO> {
         return sharingService.findAll()
+    }
+
+    @PostMapping
+    fun createShare(@RequestBody sharingDTO: SharingDTO): ResponseEntity<SharingDTO>{
+        val newShare = sharingService.createShare(sharingDTO)
+        return ResponseEntity.ok(newShare)
     }
 }
